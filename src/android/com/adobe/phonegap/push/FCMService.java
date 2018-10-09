@@ -413,12 +413,12 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         .setAutoCancel(true);
 
     SharedPreferences prefs = context.getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH, Context.MODE_PRIVATE);
-    String localIcon = prefs.getString(ICON, null);
-    String localIconColor = prefs.getString(ICON_COLOR, null);
+    // String localIcon = prefs.getString(ICON, null);
+    // String localIconColor = prefs.getString(ICON_COLOR, null);
     boolean soundOption = prefs.getBoolean(SOUND, true);
     boolean vibrateOption = prefs.getBoolean(VIBRATE, true);
-    Log.d(LOG_TAG, "stored icon=" + localIcon);
-    Log.d(LOG_TAG, "stored iconColor=" + localIconColor);
+    // Log.d(LOG_TAG, "stored icon=" + localIcon);
+    // Log.d(LOG_TAG, "stored iconColor=" + localIconColor);
     Log.d(LOG_TAG, "stored sound=" + soundOption);
     Log.d(LOG_TAG, "stored vibrate=" + vibrateOption);
 
@@ -429,13 +429,19 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     setNotificationVibration(extras, vibrateOption, mBuilder);
 
     /*
+     * TD Notification Icon
+     */
+
+    setNotificationIconsTD(extras, packageName, resources, mBuilder);
+
+    /*
      * Notification Icon Color
      *
      * Sets the small-icon background color of the notification.
      * To use, add the `iconColor` key to plugin android options
      *
      */
-    setNotificationIconColor(extras.getString(COLOR), mBuilder, localIconColor);
+    // setNotificationIconColor(extras.getString(COLOR), mBuilder, localIconColor);
 
     /*
      * Notification Icon
@@ -449,7 +455,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
      * If no resource is found, falls
      *
      */
-    setNotificationSmallIcon(context, extras, packageName, resources, mBuilder, localIcon);
+    // setNotificationSmallIcon(context, extras, packageName, resources, mBuilder, localIcon);
 
     /*
      * Notification Large-Icon
@@ -463,7 +469,7 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
      * - if none, we don't set the large icon
      *
      */
-    setNotificationLargeIcon(extras, packageName, resources, mBuilder);
+    // setNotificationLargeIcon(extras, packageName, resources, mBuilder);
 
     /*
      * Notification Sound
@@ -801,47 +807,98 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     return output;
   }
 
-  private void setNotificationLargeIcon(Bundle extras, String packageName, Resources resources,
-      NotificationCompat.Builder mBuilder) {
-    String gcmLargeIcon = extras.getString(IMAGE); // from gcm
-    String imageType = extras.getString(IMAGE_TYPE, IMAGE_TYPE_SQUARE);
-    if (gcmLargeIcon != null && !"".equals(gcmLargeIcon)) {
-      if (gcmLargeIcon.startsWith("http://") || gcmLargeIcon.startsWith("https://")) {
-        Bitmap bitmap = getBitmapFromURL(gcmLargeIcon);
-        if (IMAGE_TYPE_SQUARE.equalsIgnoreCase(imageType)) {
-          mBuilder.setLargeIcon(bitmap);
-        } else {
-          Bitmap bm = getCircleBitmap(bitmap);
-          mBuilder.setLargeIcon(bm);
-        }
-        Log.d(LOG_TAG, "using remote large-icon from gcm");
-      } else {
-        AssetManager assetManager = getAssets();
-        InputStream istr;
-        try {
-          istr = assetManager.open(gcmLargeIcon);
-          Bitmap bitmap = BitmapFactory.decodeStream(istr);
-          if (IMAGE_TYPE_SQUARE.equalsIgnoreCase(imageType)) {
-            mBuilder.setLargeIcon(bitmap);
-          } else {
-            Bitmap bm = getCircleBitmap(bitmap);
-            mBuilder.setLargeIcon(bm);
-          }
-          Log.d(LOG_TAG, "using assets large-icon from gcm");
-        } catch (IOException e) {
-          int largeIconId = 0;
-          largeIconId = getImageId(resources, gcmLargeIcon, packageName);
-          if (largeIconId != 0) {
-            Bitmap largeIconBitmap = BitmapFactory.decodeResource(resources, largeIconId);
-            mBuilder.setLargeIcon(largeIconBitmap);
-            Log.d(LOG_TAG, "using resources large-icon from gcm");
-          } else {
-            Log.d(LOG_TAG, "Not setting large icon");
-          }
-        }
-      }
-    }
+  private static enum TrendDisplayType {
+    Below, Close, Above, NoSpend;
   }
+
+  private void setNotificationIconsTD(Bundle extras, String packageName, Resources resources,
+      NotificationCompat.Builder mBuilder) {
+    String largeIconResourceName = null;
+    String smallIconResourceName = "@drawable/spendmeter_small_icon";
+
+    String trendDisplayType = extras.getString("trendDisplayType");
+
+    if (trendDisplayType != null) {
+      switch (TrendDisplayType.valueOf(trendDisplayType)) {
+        case Below:
+          largeIconResourceName = "@drawable/spendmeter_icon_green";
+          break;
+        case Close:
+          largeIconResourceName = "@drawable/spendmeter_icon_yellow";
+          break;
+        case Above:
+          largeIconResourceName = "@drawable/spendmeter_icon_red";
+          break;
+        case NoSpend:
+          largeIconResourceName = "@drawable/spendmeter_icon_gray";
+          break;
+        default:
+          largeIconResourceName = "@drawable/spendmeter_icon_gray";
+          Log.d(LOG_TAG, "Warning: trend display type is unknown ''" + trendDisplayType + "' , defaulting to gray spend icon");
+          break;
+      }
+    } else {
+      largeIconResourceName = "@drawable/spendmeter_icon_gray";
+      Log.d(LOG_TAG, "Warning: trend display type is null, defaulting to gray spend icon");
+    }
+
+    Log.d(LOG_TAG, "Getting large icon resource named: '" + largeIconResourceName + "' for spend indicator");
+    Log.d(LOG_TAG, "Getting small icon resource named: '" + smallIconResourceName + "'");
+
+    int largeIconId = resources.getIdentifier(largeIconResourceName, "drawable", packageName);
+    int smallIconId = resources.getIdentifier(smallIconResourceName, "drawable", packageName);
+
+    Log.d(LOG_TAG, "Notification large icon id: " + largeIconId);
+    Log.d(LOG_TAG, "Notification small icon id: " + smallIconId);
+
+    Bitmap largeIconBitmap = BitmapFactory.decodeResource(resources, largeIconId);
+    mBuilder.setLargeIcon(largeIconBitmap);
+
+    mBuilder.setSmallIcon(smallIconId);
+  }
+
+
+  // private void setNotificationLargeIcon(Bundle extras, String packageName, Resources resources,
+  //     NotificationCompat.Builder mBuilder) {
+  //   String gcmLargeIcon = extras.getString(IMAGE); // from gcm
+  //   String imageType = extras.getString(IMAGE_TYPE, IMAGE_TYPE_SQUARE);
+  //   if (gcmLargeIcon != null && !"".equals(gcmLargeIcon)) {
+  //     if (gcmLargeIcon.startsWith("http://") || gcmLargeIcon.startsWith("https://")) {
+  //       Bitmap bitmap = getBitmapFromURL(gcmLargeIcon);
+  //       if (IMAGE_TYPE_SQUARE.equalsIgnoreCase(imageType)) {
+  //         mBuilder.setLargeIcon(bitmap);
+  //       } else {
+  //         Bitmap bm = getCircleBitmap(bitmap);
+  //         mBuilder.setLargeIcon(bm);
+  //       }
+  //       Log.d(LOG_TAG, "using remote large-icon from gcm");
+  //     } else {
+  //       AssetManager assetManager = getAssets();
+  //       InputStream istr;
+  //       try {
+  //         istr = assetManager.open(gcmLargeIcon);
+  //         Bitmap bitmap = BitmapFactory.decodeStream(istr);
+  //         if (IMAGE_TYPE_SQUARE.equalsIgnoreCase(imageType)) {
+  //           mBuilder.setLargeIcon(bitmap);
+  //         } else {
+  //           Bitmap bm = getCircleBitmap(bitmap);
+  //           mBuilder.setLargeIcon(bm);
+  //         }
+  //         Log.d(LOG_TAG, "using assets large-icon from gcm");
+  //       } catch (IOException e) {
+  //         int largeIconId = 0;
+  //         largeIconId = getImageId(resources, gcmLargeIcon, packageName);
+  //         if (largeIconId != 0) {
+  //           Bitmap largeIconBitmap = BitmapFactory.decodeResource(resources, largeIconId);
+  //           mBuilder.setLargeIcon(largeIconBitmap);
+  //           Log.d(LOG_TAG, "using resources large-icon from gcm");
+  //         } else {
+  //           Log.d(LOG_TAG, "Not setting large icon");
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   private int getImageId(Resources resources, String icon, String packageName) {
     int iconId = resources.getIdentifier(icon, DRAWABLE, packageName);
@@ -851,43 +908,43 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
     return iconId;
   }
 
-  private void setNotificationSmallIcon(Context context, Bundle extras, String packageName, Resources resources,
-      NotificationCompat.Builder mBuilder, String localIcon) {
-    int iconId = 0;
-    String icon = extras.getString(ICON);
-    if (icon != null && !"".equals(icon)) {
-      iconId = getImageId(resources, icon, packageName);
-      Log.d(LOG_TAG, "using icon from plugin options");
-    } else if (localIcon != null && !"".equals(localIcon)) {
-      iconId = getImageId(resources, localIcon, packageName);
-      Log.d(LOG_TAG, "using icon from plugin options");
-    }
-    if (iconId == 0) {
-      Log.d(LOG_TAG, "no icon resource found - using application icon");
-      iconId = context.getApplicationInfo().icon;
-    }
-    mBuilder.setSmallIcon(iconId);
-  }
+  // private void setNotificationSmallIcon(Context context, Bundle extras, String packageName, Resources resources,
+  //     NotificationCompat.Builder mBuilder, String localIcon) {
+  //   int iconId = 0;
+  //   String icon = extras.getString(ICON);
+  //   if (icon != null && !"".equals(icon)) {
+  //     iconId = getImageId(resources, icon, packageName);
+  //     Log.d(LOG_TAG, "using icon from plugin options");
+  //   } else if (localIcon != null && !"".equals(localIcon)) {
+  //     iconId = getImageId(resources, localIcon, packageName);
+  //     Log.d(LOG_TAG, "using icon from plugin options");
+  //   }
+  //   if (iconId == 0) {
+  //     Log.d(LOG_TAG, "no icon resource found - using application icon");
+  //     iconId = context.getApplicationInfo().icon;
+  //   }
+  //   mBuilder.setSmallIcon(iconId);
+  // }
 
-  private void setNotificationIconColor(String color, NotificationCompat.Builder mBuilder, String localIconColor) {
-    int iconColor = 0;
-    if (color != null && !"".equals(color)) {
-      try {
-        iconColor = Color.parseColor(color);
-      } catch (IllegalArgumentException e) {
-        Log.e(LOG_TAG, "couldn't parse color from android options");
-      }
-    } else if (localIconColor != null && !"".equals(localIconColor)) {
-      try {
-        iconColor = Color.parseColor(localIconColor);
-      } catch (IllegalArgumentException e) {
-        Log.e(LOG_TAG, "couldn't parse color from android options");
-      }
-    }
-    if (iconColor != 0) {
-      mBuilder.setColor(iconColor);
-    }
-  }
+  // private void setNotificationIconColor(String color, NotificationCompat.Builder mBuilder, String localIconColor) {
+  //   int iconColor = 0;
+  //   if (color != null && !"".equals(color)) {
+  //     try {
+  //       iconColor = Color.parseColor(color);
+  //     } catch (IllegalArgumentException e) {
+  //       Log.e(LOG_TAG, "couldn't parse color from android options");
+  //     }
+  //   } else if (localIconColor != null && !"".equals(localIconColor)) {
+  //     try {
+  //       iconColor = Color.parseColor(localIconColor);
+  //     } catch (IllegalArgumentException e) {
+  //       Log.e(LOG_TAG, "couldn't parse color from android options");
+  //     }
+  //   }
+  //   if (iconColor != 0) {
+  //     mBuilder.setColor(iconColor);
+  //   }
+  // }
 
   public Bitmap getBitmapFromURL(String strURL) {
     try {
