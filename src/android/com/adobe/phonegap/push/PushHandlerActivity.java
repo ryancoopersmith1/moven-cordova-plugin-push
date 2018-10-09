@@ -120,7 +120,13 @@ public class PushHandlerActivity extends Activity implements PushConstants {
     @Override
     protected void onResume() {
         super.onResume();
-        final NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+
+        // PER REQUIREMENTS:
+        // =========================================================================================================
+        // Notifications should not be cleared from the Notification Center when the user pauses or resumes the App.
+
+
+        // final NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        // notificationManager.cancelAll();
     }
 }
