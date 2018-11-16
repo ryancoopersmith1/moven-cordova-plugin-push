@@ -62,7 +62,11 @@ public class PushHandlerActivity extends Activity implements PushConstants {
                 Log.d(LOG_TAG, "startOnBackgroundTrue");
                 forceMainActivityReload(true);
             } else {
-                Log.d(LOG_TAG, "don't want main activity");
+                // Log.d(LOG_TAG, "don't want main activity");
+
+                // NOTE: custom logic below: we always want the main activity to load
+                Log.d(LOG_TAG, "forceMainActivityReload");
+                forceMainActivityReload(false);
             }
         }
     }
