@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.leolin.shortcutbadger.ShortcutBadger;
+// import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class PushPlugin extends CordovaPlugin implements PushConstants {
 
@@ -460,15 +460,15 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
    * Sets badge count on application icon and in SharedPreferences
    */
   public static void setApplicationIconBadgeNumber(Context context, int badgeCount) {
-    if (badgeCount > 0) {
-      ShortcutBadger.applyCount(context, badgeCount);
-    } else {
-      ShortcutBadger.removeCount(context);
-    }
+    // if (badgeCount > 0) {
+    //   ShortcutBadger.applyCount(context, badgeCount);
+    // } else {
+    //   ShortcutBadger.removeCount(context);
+    // }
 
-    SharedPreferences.Editor editor = context.getSharedPreferences(BADGE, Context.MODE_PRIVATE).edit();
-    editor.putInt(BADGE, Math.max(badgeCount, 0));
-    editor.apply();
+    // SharedPreferences.Editor editor = context.getSharedPreferences(BADGE, Context.MODE_PRIVATE).edit();
+    // editor.putInt(BADGE, Math.max(badgeCount, 0));
+    // editor.apply();
   }
 
   @Override

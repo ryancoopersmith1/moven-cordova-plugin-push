@@ -41,7 +41,7 @@
     <preference name="ANDROID_SUPPORT_V13_VERSION" default="27.+"/>
     <preference name="FCM_VERSION" default="11.6.2"/>
     <framework src="com.android.support:support-v13:$ANDROID_SUPPORT_V13_VERSION"/>
-    <framework src="me.leolin:ShortcutBadger:1.1.17@aar"/>
+    <!-- <framework src="me.leolin:ShortcutBadger:1.1.17@aar"/> -->
     <framework src="com.google.firebase:firebase-messaging:$FCM_VERSION"/>
     <dependency id="cordova-support-google-services" version="~1.2.1"/>
     <dependency id="phonegap-plugin-multidex" version="~1.0.0"/>
