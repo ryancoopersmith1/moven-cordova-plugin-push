@@ -56,8 +56,6 @@
 
 - (void)init:(CDVInvokedUrlCommand*)command;
 - (void)unregister:(CDVInvokedUrlCommand*)command;
-- (void)subscribe:(CDVInvokedUrlCommand*)command;
-- (void)unsubscribe:(CDVInvokedUrlCommand*)command;
 
 - (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
 - (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
@@ -72,13 +70,5 @@
 // VoIP Features
 - (void)pushRegistry:(PKPushRegistry *)registry didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(NSString *)type;
 - (void)pushRegistry:(PKPushRegistry *)registry didReceiveIncomingPushWithPayload:(PKPushPayload *)payload forType:(NSString *)type;
-
-// FCM Features
-@property(nonatomic, assign) BOOL usesFCM;
-@property(nonatomic, strong) NSNumber *fcmSandbox;
-@property(nonatomic, strong) NSString *fcmSenderId;
-@property(nonatomic, strong) NSDictionary *fcmRegistrationOptions;
-@property(nonatomic, strong) NSString *fcmRegistrationToken;
-@property(nonatomic, strong) NSArray *fcmTopics;
 
 @end
