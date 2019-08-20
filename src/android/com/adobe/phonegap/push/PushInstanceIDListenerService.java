@@ -20,7 +20,13 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         Log.d(LOG_TAG, "Refreshed token: " + refreshedToken);
-        // TODO: Implement this method to send any registration to your app's servers.
-        //sendRegistrationToServer(refreshedToken);
+        sendRegistrationToServer(refreshedToken);
+    }
+
+    public void sendRegistrationToServer(String token) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(COM_ADOBE_PHONEGAP_PUSH,
+            Context.MODE_PRIVATE);
+        String oldToken = prefs.getString(FCM_TOKEN, null);
+        // API call to new endpoint to find old token and update with new token
     }
 }
