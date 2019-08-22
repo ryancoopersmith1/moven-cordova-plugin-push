@@ -46,15 +46,18 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             .getString(R.string.app_host);
         String urlString = appHost.concat("/pay/device/refresh");
 
-        HttpURLConnection conn;
         URL url = new URL(urlString);
-        conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
         conn.setReadTimeout(10000 /* milliseconds */);
         conn.setConnectTimeout(15000 /* milliseconds */);
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
 
         conn.setRequestMethod("PUT");
         conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         conn.setRequestProperty("Accept", "*/*");
+
         conn.setRequestProperty("x-moven-channel", "mobile");
         conn.setRequestProperty("x-moven-osversion", String.valueOf(android.os.Build.VERSION.SDK_INT));
         conn.setRequestProperty("x-moven-appos","android");
@@ -62,9 +65,6 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
         if (body != null) {
             conn.setRequestProperty("Content-Length", Integer.toString(body.toString().getBytes().length));
         }
-
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
 
         sendRequest(body, conn);
     }
