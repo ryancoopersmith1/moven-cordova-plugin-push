@@ -35,11 +35,11 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
     public void sendRegistrationToServer(String token) {
         Context context = getApplicationContext();
 
-        SharedPreferences prefs = context.getSharedPreferences(COM_ADOBE_PHONEGAP_PUSH,
+        SharedPreferences prefs = context.getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
             Context.MODE_PRIVATE);
         String oldToken = prefs.getString(FCM_TOKEN, null);
 
-        if (oldToken.isEmpty()) {
+        if (oldToken == null || oldToken.isEmpty()) {
             return;
         }
 
