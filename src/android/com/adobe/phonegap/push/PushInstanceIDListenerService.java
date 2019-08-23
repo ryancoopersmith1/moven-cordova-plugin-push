@@ -81,6 +81,9 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
 
             if (Response.Status.Family.familyOf(responseCode).equals(Response.Status.Family.SUCCESSFUL)) {
                 Log.d(LOG_TAG, "Successfully saved refreshed token in server. Response code: " + responseCode);
+
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(FCM_TOKEN, token);
             } else {
                 Log.e(LOG_TAG, "Failed to save refreshed token in server. Response code: " + responseCode);
             }

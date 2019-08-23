@@ -248,7 +248,7 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
             editor.putString(SENDER_ID, senderID);
             editor.putString(MESSAGE_KEY, jo.optString(MESSAGE_KEY));
             editor.putString(TITLE_KEY, jo.optString(TITLE_KEY));
-            editor.putString(FCM_TOKEN, jo.optString(token));
+            editor.putString(FCM_TOKEN, token);
             editor.commit();
 
           }
