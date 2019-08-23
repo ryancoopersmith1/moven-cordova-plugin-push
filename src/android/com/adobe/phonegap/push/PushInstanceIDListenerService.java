@@ -17,9 +17,11 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.ProtocolException
+import java.net.ProtocolException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javax.ws.rs.core.Response.Status.Family;
 
 public class PushInstanceIDListenerService extends FirebaseInstanceIdService implements PushConstants {
     public static final String LOG_TAG = "Push_InsIdService";
@@ -77,7 +79,11 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             conn.connect();
             int responseCode = conn.getResponseCode();
 
-            Log.d(LOG_TAG, "Sent refreshed token to server. Response code: " + responseCode);
+            if (Response.Status.Family.familyOf(responseCode).equals(Response.Status.Family.SUCCESSFUL)) {
+                Log.d(LOG_TAG, "Successfully saved refreshed token in server. Response code: " + responseCode);
+            } else {
+                Log.e(LOG_TAG, "Failed to save refreshed token in server. Response code: " + responseCode);
+            }
         } catch (MalformedURLException | ProtocolException | IOException | JSONException e) {
             e.printStackTrace();
         }
