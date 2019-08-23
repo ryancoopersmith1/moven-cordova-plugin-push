@@ -80,6 +80,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             if (responseCode >= 200 && responseCode <= 299) {
                 Log.d(LOG_TAG, "Successfully saved refreshed token in server. Response code: " + responseCode);
 
+                // TODO IMPORTANT - make sure token was actually replaced before doing this?
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString(FCM_TOKEN, token);
             } else {
