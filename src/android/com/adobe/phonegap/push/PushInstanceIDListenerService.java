@@ -86,7 +86,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             } else {
                 Log.e(LOG_TAG, "Failed to save refreshed token in server. Response code: " + responseCode);
             }
-        } catch (MalformedURLException | ProtocolException | IOException | JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
