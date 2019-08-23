@@ -1,4 +1,5 @@
 package com.adobe.phonegap.push;
+
 import com.moven.td.dev.R;
 
 import android.content.Intent;
@@ -15,6 +16,8 @@ import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.ProtocolException
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -40,35 +43,39 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             return;
         }
 
-        JSONObject body = new JSONObject();
-        body.put("token", token);
-        body.put("oldToken", oldToken);
+        try {
+            JSONObject body = new JSONObject();
+            body.put("token", token);
+            body.put("oldToken", oldToken);
 
-        String appHost = context.getResources()
-            .getString(R.string.app_host);
-        String urlString = appHost.concat("/pay/device/refresh");
+            String appHost = context.getResources()
+                .getString(R.string.app_host);
+            String urlString = appHost.concat("/pay/device/refresh");
 
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        conn.setReadTimeout(10000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
 
-        conn.setRequestMethod("PUT");
-        conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-        conn.setRequestProperty("Accept", "*/*");
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            conn.setRequestProperty("Accept", "*/*");
 
-        conn.setRequestProperty("x-moven-channel", "mobile");
-        conn.setRequestProperty("x-moven-osversion", String.valueOf(android.os.Build.VERSION.SDK_INT));
-        conn.setRequestProperty("x-moven-appos","android");
+            conn.setRequestProperty("x-moven-channel", "mobile");
+            conn.setRequestProperty("x-moven-osversion", String.valueOf(android.os.Build.VERSION.SDK_INT));
+            conn.setRequestProperty("x-moven-appos","android");
 
-        if (body != null) {
-            conn.setRequestProperty("Content-Length", Integer.toString(body.toString().getBytes().length));
+            if (body != null) {
+                conn.setRequestProperty("Content-Length", Integer.toString(body.toString().getBytes().length));
+            }
+
+            sendRequest(body, conn);
+        } catch (MalformedURLException | ProtocolException | IOException | JSONException e) {
+            e.printStackTrace();
         }
-
-        sendRequest(body, conn);
     }
 
     public static void sendRequest(JSONObject body, HttpURLConnection conn) throws IOException {
