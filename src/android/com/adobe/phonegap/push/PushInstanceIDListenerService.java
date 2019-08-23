@@ -73,6 +73,11 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             }
 
             sendRequest(body, conn);
+
+            conn.connect();
+            int responseCode = conn.getResponseCode();
+
+            Log.d(LOG_TAG, "Sent refreshed token to server. Response code: " + responseCode);
         } catch (MalformedURLException | ProtocolException | IOException | JSONException e) {
             e.printStackTrace();
         }
