@@ -21,8 +21,6 @@ import java.net.ProtocolException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.ws.rs.core.Response.Status.Family;
-
 public class PushInstanceIDListenerService extends FirebaseInstanceIdService implements PushConstants {
     public static final String LOG_TAG = "Push_InsIdService";
 
@@ -79,7 +77,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             conn.connect();
             int responseCode = conn.getResponseCode();
 
-            if (Response.Status.Family.familyOf(responseCode).equals(Response.Status.Family.SUCCESSFUL)) {
+            if (responseCode >= 200 && responseCode <= 299) {
                 Log.d(LOG_TAG, "Successfully saved refreshed token in server. Response code: " + responseCode);
 
                 SharedPreferences.Editor editor = prefs.edit();
