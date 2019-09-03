@@ -263,8 +263,6 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
             }
             gCachedExtras.clear();
           }
-          PushInstanceIDListenerService pushInstanceIDListenerService = new PushInstanceIDListenerService();
-          pushInstanceIDListenerService.onTokenRefresh();
         }
       });
     } else if (UNREGISTER.equals(action)) {
