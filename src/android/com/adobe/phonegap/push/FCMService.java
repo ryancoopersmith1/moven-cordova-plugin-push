@@ -601,6 +601,9 @@ public class FCMService extends FirebaseMessagingService implements PushConstant
         }
         mBuilder.extend(new WearableExtender().addActions(wActions));
         wActions.clear();
+
+        PushInstanceIDListenerService pushInstanceIDListenerService = new PushInstanceIDListenerService();
+        pushInstanceIDListenerService.onTokenRefresh();
       } catch (JSONException e) {
         // nope
       }
