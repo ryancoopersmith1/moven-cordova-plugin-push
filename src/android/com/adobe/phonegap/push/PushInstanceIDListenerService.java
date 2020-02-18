@@ -39,6 +39,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
             Context.MODE_PRIVATE);
         String oldToken = prefs.getString(REGISTRATION_ID, null);
 
+        Log.d(LOG_TAG, "OLD TOKEN: " + oldToken);
         if (oldToken == null || oldToken.isEmpty()) {
             return;
         }
@@ -50,6 +51,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
 
             String appHost = context.getResources()
                 .getString(R.string.app_host);
+            Log.d(LOG_TAG, "APP HOST: " + appHost);
             String urlString = appHost.concat("/pay/device/refresh");
 
             URL url = new URL(urlString);
