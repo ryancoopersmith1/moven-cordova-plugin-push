@@ -37,7 +37,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
 
         SharedPreferences prefs = context.getSharedPreferences(PushPlugin.COM_ADOBE_PHONEGAP_PUSH,
             Context.MODE_PRIVATE);
-        String oldToken = prefs.getString(FCM_TOKEN, null);
+        String oldToken = prefs.getString(REGISTRATION_ID, null);
 
         if (oldToken == null || oldToken.isEmpty()) {
             return;
@@ -82,7 +82,7 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
 
                 // TODO IMPORTANT - make sure token was actually replaced before doing this?
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(FCM_TOKEN, token);
+                editor.putString(REGISTRATION_ID, token);
             } else {
                 Log.e(LOG_TAG, "Failed to save refreshed token in server. Response code: " + responseCode);
             }

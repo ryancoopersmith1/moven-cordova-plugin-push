@@ -248,7 +248,6 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
             editor.putString(SENDER_ID, senderID);
             editor.putString(MESSAGE_KEY, jo.optString(MESSAGE_KEY));
             editor.putString(TITLE_KEY, jo.optString(TITLE_KEY));
-            editor.putString(FCM_TOKEN, token);
             editor.commit();
 
           }
@@ -286,7 +285,6 @@ public class PushPlugin extends CordovaPlugin implements PushConstants {
               editor.remove(CLEAR_NOTIFICATIONS);
               editor.remove(FORCE_SHOW);
               editor.remove(SENDER_ID);
-              editor.remove(FCM_TOKEN);
               editor.commit();
             }
 
