@@ -96,11 +96,11 @@ public class PushInstanceIDListenerService extends FirebaseInstanceIdService imp
         try {
             JSONObject body = new JSONObject();
             body.put("token", token);
-            body.put("oldToken", oldToken);
+            body.put("old_token", oldToken);
 
-            String appHost = context.getResources()
-                .getString(R.string.app_host);
-            String urlString = appHost.concat("/pay/device/refresh");
+            String pushTokenRefreshHost = context.getResources()
+                .getString(R.string.push_token_refresh_host);
+            String urlString = pushTokenRefreshHost.concat("/push-token-refresh");
 
             Log.d(LOG_TAG, "Sending request to " + urlString + " to update FCM token");
 
